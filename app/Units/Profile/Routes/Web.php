@@ -2,7 +2,7 @@
 
 namespace App\Units\Profile\Routes;
 
-use App\Support\Units\Routes\Route;
+use App\Support\Http\Route;
 
 /**
  * Web Routes.

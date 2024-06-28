@@ -2,7 +2,7 @@
 
 namespace App\Units\Profile\Providers;
 
-use App\Support\Units\Providers\ServiceProvider;
+use App\Support\Units\ServiceProvider;
 
 class UnitServiceProvider extends ServiceProvider
 {

@@ -4,7 +4,6 @@ namespace App\Support\Domain;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
-//use Migrator\MigratorTrait as HasMigrations;
 use ReflectionClass;
 
 /**
@@ -12,9 +11,6 @@ use ReflectionClass;
  */
 abstract class ServiceProvider extends LaravelServiceProvider
 {
-    // Enable migrations trait
-    //use HasMigrations;
-
     /**
      * @var string Domain alias for translations and other keys
      */
@@ -31,21 +27,6 @@ abstract class ServiceProvider extends LaravelServiceProvider
     public $bindings = [];
 
     /**
-     * @var array List of migrations provided by Domain
-     */
-    protected $migrations = [];
-
-    /**
-     * @var array List of seeders provided by Domain
-     */
-    protected $seeders = [];
-
-    /**
-     * @var array List of model factories to load
-     */
-    protected $factories = [];
-
-    /**
      * @var bool Enable translations for this Domain
      */
     protected $hasTranslations = false;
@@ -53,9 +34,7 @@ abstract class ServiceProvider extends LaravelServiceProvider
     public function boot()
     {
         // Register translations
-        if ($this->hasTranslations) {
-            $this->registerTranslations();
-        }
+        $this->registerTranslations();
     }
 
     /**
@@ -68,14 +47,7 @@ abstract class ServiceProvider extends LaravelServiceProvider
         // Register bindings.
         $this->registerBindings(collect($this->bindings));
         // Register migrations.
-        $this->registerMigrations(collect($this->migrations));
-
-        if (!$this->app->environment('production')) {
-            // Register seeders.
-            $this->registerSeeders(collect($this->seeders));
-            // Register model factories.
-            $this->registerFactories(collect($this->factories));
-        }
+        $this->registerMigrations();
     }
 
     /**
@@ -107,34 +79,9 @@ abstract class ServiceProvider extends LaravelServiceProvider
      *
      * @param Collection $migrations
      */
-    protected function registerMigrations(Collection $migrations)
+    protected function registerMigrations()
     {
         $this->loadMigrationsFrom($this->domainPath("Database/Migrations"));
-    }
-
-    /**
-     * Register the defined seeders.
-     *
-     * @param Collection $seeders
-     */
-    protected function registerSeeders(Collection $seeders)
-    {
-        //$this->seeders($seeders->all());
-        $seeders->each(function ($seederName) {
-            (new $seederName());
-        });
-    }
-
-    /**
-     * Register Model Factories.
-     *
-     * @param Collection $factories
-     */
-    protected function registerFactories(Collection $factories)
-    {
-        $factories->each(function ($factoryName) {
-            (new $factoryName());
-        });
     }
 
     /**
@@ -142,10 +89,12 @@ abstract class ServiceProvider extends LaravelServiceProvider
      */
     protected function registerTranslations()
     {
-        $this->loadTranslationsFrom(
-            $this->domainPath('Resources/Lang'),
-            $this->alias
-        );
+        if ($this->hasTranslations) {
+            $this->loadTranslationsFrom(
+                $this->domainPath('Resources/Lang'),
+                $this->alias
+            );
+        }
     }
 
     /**

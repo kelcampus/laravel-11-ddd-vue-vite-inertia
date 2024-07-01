@@ -2,7 +2,7 @@
 
 namespace App\Units\Auth\Http\Controllers;
 
-use App\Support\Units\Http\Controllers\Controller;
+use App\Support\Http\Controller;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

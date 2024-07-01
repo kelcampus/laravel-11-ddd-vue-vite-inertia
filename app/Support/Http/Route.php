@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Units\Routes;
+namespace App\Support\Http;
 
 use Illuminate\Routing\Router;
 

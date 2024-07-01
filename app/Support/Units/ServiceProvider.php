@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Support\Units\Providers;
+namespace App\Support\Units;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades;
 
 /**
  * Class UnitServiceProvider.
@@ -21,11 +22,6 @@ class ServiceProvider extends LaravelServiceProvider
     protected $alias;
 
     /**
-     * @var bool Enable views loading on the Unity
-     */
-    protected $hasViews = false;
-
-    /**
      * @var bool Enable translations loading on the Unity
      */
     protected $hasTranslations = false;
@@ -33,12 +29,27 @@ class ServiceProvider extends LaravelServiceProvider
     /**
      * @var bool Enable views loading on the Unity
      */
+    protected $hasViews = false;
+
+    /**
+     * @var bool Enable views components loading on the Unity
+     */
     protected $hasComponents = false;
 
     /**
-     * @var array Enable components loading on the Unity
+     * @var array Components
      */
     protected $components = [];
+
+    /**
+     * @var bool Enable views composers on the Unity
+     */
+    protected $hasComposers = false;
+
+    /**
+     * @var array Composers
+     */
+    protected $composers = [];
 
     /**
      * Boot required registering of views and translations.
@@ -53,6 +64,9 @@ class ServiceProvider extends LaravelServiceProvider
 
         // register unity components.
         $this->registerComponents($this->components);
+
+        // register unity composers.
+        $this->registerComposers(collect($this->composers));
     }
 
     public function register()
@@ -89,7 +103,7 @@ class ServiceProvider extends LaravelServiceProvider
     }
 
     /**
-     * Register unity views.
+     * Register unity views only for Blade Templates.
      */
     protected function registerViews()
     {
@@ -102,13 +116,24 @@ class ServiceProvider extends LaravelServiceProvider
     }
 
     /**
-     * Register unity components.
+     * Register unity components only for Blade Templates.
      */
     protected function registerComponents(array $components)
     {
         if ($this->hasComponents) {
             $this->loadViewComponentsAs($this->alias, $components);
-            //\Illuminate\Support\Facades\Blade::componentNamespace($this->alias, $this->alias);
+        }
+    }
+
+    /**
+     * Register unity Composers only for Blade Templates.
+     */
+    protected function registerComposers(Collection $composers)
+    {
+        if ($this->hasComposers) {
+            $composers->each(function($providerClass, $view) {
+                Facades\View::composer($view, $providerClass);
+            });
         }
     }
 

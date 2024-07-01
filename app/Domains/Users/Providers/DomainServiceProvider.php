@@ -2,10 +2,9 @@
 
 namespace App\Domains\Users\Providers;
 
-use App\Domains\Users\Database\Factories\UserFactory;
 use App\Support\Domain\ServiceProvider;
-use App\Domains\Users\Database\Seeders\DatabaseSeeder;
-use App\Domains\Users\Database\Seeders\UserSeeder;
+use App\Domains\Users\Contracts;
+use App\Domains\Users\Repositories;
 
 /**
  * Class DomainServiceProvider.
@@ -25,24 +24,16 @@ class DomainServiceProvider extends ServiceProvider
     protected $hasTranslations = true;
 
     /**
+     * @var array Bind contracts to implementations
+     */
+    public $bindings = [
+        Contracts\UserRepository::class => Repositories\UserRepository::class,
+    ];
+
+    /**
      * @var array Providers registered within the domain
      */
     protected $subProviders = [
         //EventServiceProvider::class,
-    ];
-
-    /**
-     * @var array List of model factories to load
-     */
-    protected $factories = [
-        UserFactory::class
-    ];
-
-    /**
-     * @var array List of seeders provided by Domain
-     */
-    protected $seeders = [
-        UserSeeder::class,
-        DatabaseSeeder::class
     ];
 }
